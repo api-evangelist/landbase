@@ -1,0 +1,78 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://cli.landbase.com/latest/version.txt, https://cli.landbase.com/v<version>/notice.json,
+  the public release-bucket listing at https://cli.landbase.com/,
+  https://www.landbase.com/docs/reference/update,
+  https://www.landbase.com/docs/reference/error-codes,
+  https://www.landbase.com/docs/explanation/platform-vs-legacy,
+  and negative probes for a status page.
+description: >-
+  Landbase versions its client and not its API. There is no API version header, no dated API
+  version, and no published API version at all — the gateway is whatever api.landbase.com is today,
+  and the only compatibility mechanism is that the server can refuse an outdated CLI with
+  UPGRADE_REQUIRED. That inverts the usual contract: instead of the provider promising stability to
+  pinned clients, the client is required to keep moving. With 53 releases in four months and a daily
+  self-update check, that is a live moving target for anything automated against it.
+versioning:
+  scheme: semver on the client only (landbase-cli, currently 0.40.0, pre-1.0)
+  api_version_header: none
+  api_version_scheme: none published
+  mechanism: >-
+    The CLI checks for updates daily (disabled by LANDBASE_NO_UPDATE_CHECK=1 or CI=1) and prompts
+    when a newer version exists. `landbase-cli update` self-updates; `landbase-cli version --check`
+    checks manually.
+  server_enforcement: >-
+    UPGRADE_REQUIRED (exit 2) — "The version of landbase-cli you are running is too old to use this
+    API." This is the only stated compatibility boundary and it is enforced at runtime with no
+    advance notice.
+  docs: https://www.landbase.com/docs/reference/update
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  advance_notice: none published
+  notes: >-
+    No deprecation policy, no support window, no end-of-life schedule, and no RFC 8594 Sunset or
+    Deprecation headers. Deprecations do happen and are announced only as a line in a release
+    notice — v0.31.0 (2026-07-06) simultaneously graduated tam_mapping_v2 to GA, renamed it to
+    tam_map_creator, and retired the experimental tam_mapping_v1 agent. A caller that had automated
+    against tam_mapping_v1 learned about it by breaking.
+  legacy_surfaces:
+    - name: Legacy mode (direct AgentOS, lbk_ API keys)
+      status: deprecated-in-practice
+      superseded_by: Platform mode (OAuth lbs_ session via api.landbase.com)
+      removal_date: null
+      evidence: >-
+        https://www.landbase.com/docs/explanation/platform-vs-legacy — "Legacy mode exists for
+        backward compatibility... If you are starting fresh, use platform mode." No removal date is
+        given, and the FAQ still recommends the legacy API key as the way to authenticate in CI,
+        which is the one place a long-lived credential is genuinely needed. The migration story and
+        the automation story therefore point in opposite directions.
+    - name: tam_mapping_v1 agent
+      status: retired
+      retired_in: v0.31.0 (2026-07-06)
+      evidence: https://cli.landbase.com/v0.31.0/notice.json
+sla:
+  url: null
+  public_uptime_target: null
+  notes: No SLA or uptime commitment is published for the free or paid self-serve tiers.
+status_page: null
+status_page_probe:
+  probes:
+    - {url: 'https://status.landbase.com/', result: NXDOMAIN}
+    - {url: 'https://landbase.statuspage.io/', result: '200 but serves the Atlassian Statuspage marketing site — not a Landbase status page'}
+  note: >-
+    Landbase publishes no status page. For a platform whose long-running workflows already surface
+    Cloudflare 524 edge timeouts to callers, there is no external signal to distinguish an incident
+    from a slow run.
+changelog: changelog/landbase-changelog.yml
+support:
+  self_diagnosis: landbase-cli doctor
+  help_center: https://support.landbase.com/landbase/directories
+  feedback_channel: landbase-cli feedback (with --transcript to attach the agent transcript)
+  issue_tracker: >-
+    The FAQ directs CLI bugs to https://github.com/landbaseapp/landbase-cli, which returns 404 to
+    anonymous callers — the repository is private or does not exist, so the documented bug-report
+    route is not usable by the public.

@@ -1,0 +1,48 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  Negative probes and documentation search on 2026-08-23 — mcp.landbase.com (NXDOMAIN),
+  registry.npmjs.org and pypi.org (404 for every landbase name), the full documentation set at
+  https://www.landbase.com/docs/, and all 23 published Agent Skills at
+  https://cli.landbase.com/latest/skills/.
+description: >-
+  Landbase ships no MCP server — not a hosted endpoint, not a stdio package, not a candidate. This
+  file records that absence deliberately, because Landbase is otherwise one of the more
+  agent-forward providers in the catalog and the temptation to read "agent-native" as "has MCP" is
+  exactly the error worth writing down. Its agent strategy is a different one: a self-updating CLI
+  that emits JSON and stable error codes, plus 23 provider-authored Agent Skills installed into
+  Claude Code and Codex. MCP appears in the skills only as something Landbase CONSUMES — the
+  prospect-builder, qualify-leads, query-assist and list-similarity-check skills call a Google
+  Drive/Sheets MCP server to deliver output. No `MCPServer` pointer is emitted in apis.yml, because
+  there is no server to point at.
+status: none
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+probes:
+  - {target: 'https://mcp.landbase.com/', result: NXDOMAIN}
+  - {target: 'npm: landbase, landbase-cli, @landbase/cli, @landbase/sdk, landbase-sdk', result: 404}
+  - {target: 'pypi: landbase, landbase-cli, landbase-sdk', result: 404}
+  - {target: 'documentation full-text (docs.landbase.com llms-full.txt + 68 sitemap pages)', result: 'no MCP server mentioned'}
+  - {target: 'https://cli.landbase.com/latest/skills/ (23 SKILL.md)', result: 'MCP referenced only as a third-party output channel (Google Drive/Sheets)'}
+equivalent_agent_surface:
+  cli: cli/landbase-cli.yml
+  skills: skills/_index.yml
+  claude_code_plugin: >-
+    `landbase-cli config permissions` installs a Claude Code plugin exposing /landbase-cli:search,
+    /landbase-cli:auth and /landbase-cli:setup.
+  documented_tool_library: >-
+    Landbase documents 19 agent tools at https://www.landbase.com/docs/reference/tools — search
+    companies, search contacts, build audience, expand titles, look up company, find company, find
+    person, research products, qualify leads, search by meaning, expand lookalikes, scout
+    lookalikes, expand industries, discover related industries, analyze patterns, transform data,
+    search the web, read webpage, find local businesses. These are the internal tools the Landbase
+    agent selects between, described in prose only — no input schemas are published, and they are
+    not individually callable, so no tool crosswalk could be derived.
+crosswalk: >-
+  Not emitted. A ToolCrosswalk binds MCP tools (or GraphQL fields) to backing OpenAPI operationIds;
+  Landbase publishes neither side of that mapping.

@@ -1,0 +1,127 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://www.landbase.com/docs/reference/error-codes,
+  https://www.landbase.com/docs/reference/exit-codes,
+  https://www.landbase.com/docs/reference/contacts-import,
+  https://www.landbase.com/docs/reference/email-campaigns,
+  https://www.landbase.com/docs/reference/linkedin-campaigns.
+description: >-
+  Landbase publishes a stable, documented error-code registry — but for the CLI, not for the HTTP
+  API. Errors are written to stderr as a JSON object with `error.code`, `error.message` and an
+  optional `error.meta`, and the codes are explicitly promised stable across versions and safe to
+  branch on in scripts. Each code maps to a numeric process exit code so a shell can branch without
+  parsing. This is not RFC 9457 problem+json — there is no `type` URI, no `title`/`detail`/`status`
+  triple, and no published catalogue of the HTTP status codes the gateway itself returns. It is
+  nonetheless a real, well-formed error contract, and for an agent driving the CLI it is the one
+  that matters.
+format: vendor-json-envelope
+rfc9457: false
+envelope:
+  channel: stderr (stdout carries the success payload as JSON)
+  shape: '{"error": {"code": "<CODE>", "message": "<human text>", "meta": {}}}'
+  example: '{"error":{"code":"RATE_LIMITED","message":"Too many requests. Please wait before retrying.","meta":{"retry_after_seconds":30}}}'
+  stability: Codes are documented as stable across versions.
+exit_codes:
+  - {code: 0, meaning: Success.}
+  - {code: 1, meaning: The command needs a caller fix — different flags, or a required confirmation.}
+  - {code: 2, meaning: The API returned an error, a resource was missing, a publish was required, or a download failed.}
+  - {code: 3, meaning: Authentication failed or no active key was available.}
+  - {code: 4, meaning: A network or timeout issue occurred.}
+problem_types:
+  - code: AUTH_FAILED
+    exit: 3
+    title: Authentication failed
+    detail: No valid API key or session, or the credentials were rejected.
+    remediation: Run `landbase-cli auth login`. In CI, check LANDBASE_API_KEY.
+  - code: AUTH_REQUIRED
+    exit: 3
+    title: Interactive login required
+    detail: Surfaced by contacts-import when no session exists; the browser flow must be completed first.
+    remediation: Run `landbase-cli auth login`.
+  - code: RATE_LIMITED
+    exit: 2
+    title: Too many requests
+    detail: Too many requests in a short window. Corresponds to HTTP 429 at the gateway.
+    meta: retry_after_seconds
+    remediation: Wait and retry; honour meta.retry_after_seconds. The CLI itself auto-retries 3x with 5s/10s/20s backoff honouring Retry-After.
+    see: rate-limits/landbase-rate-limits.yml
+  - code: TIMEOUT
+    exit: 4
+    title: Request timed out
+    detail: The request exceeded the configured timeout. contacts-import wait/--watch times out at 30 minutes; the search auto-poll ceiling defaults to 300s.
+    meta: importId (on contacts-import), request_id (on contact-enrich)
+    remediation: Retry, raise --timeout, or resume with the id carried in meta.
+  - code: NETWORK_ERROR
+    exit: 4
+    title: Network error
+    detail: A connectivity issue prevented the request from completing.
+    remediation: Check the network and retry. Documented as often transient — retry loops are the published guidance.
+  - code: API_ERROR
+    exit: 2
+    title: Unexpected API error
+    detail: The Landbase API returned an unexpected error.
+    remediation: Inspect meta; contact support if it persists.
+  - code: DOWNLOAD_FAILED
+    exit: 2
+    title: Download failed
+    detail: The file download could not be completed — the publish step may have failed or the signed URL expired.
+    remediation: Re-run the publish workflow and retry.
+  - code: INVALID_INPUT
+    exit: 1
+    title: Invalid input
+    detail: The command received invalid arguments or flags.
+    remediation: Read message for the specific problem and fix the invocation.
+  - code: VALIDATION_ERROR
+    exit: 1
+    title: Body rejected by the backend
+    detail: "The backend rejected the request body — e.g. a datasetId that is unknown or not accessible to this account."
+    remediation: Verify the ids belong to the active account.
+  - code: UPGRADE_REQUIRED
+    exit: 2
+    title: Client too old
+    detail: This landbase-cli version is too old to use the API.
+    remediation: Run `landbase-cli update`.
+    note: >-
+      This is the only deprecation signal Landbase emits — the server can refuse an old client. No
+      Sunset or Deprecation header, and no advance notice, is published. See
+      lifecycle/landbase-lifecycle.yml.
+  - code: UPDATE_FAILED
+    exit: 2
+    title: Self-update failed
+    detail: The self-update could not download or install the new binary.
+    remediation: Check the network and write permissions on the install directory.
+  - code: NOT_FOUND
+    exit: 2
+    title: Resource not found
+    detail: The requested dataset, run, session or import does not exist, has been deleted, or belongs to another account. Also returned by `runs latest` while a run is still in flight.
+    remediation: Verify the id; for an in-flight run, wait and retry.
+  - code: SETUP_FAILED
+    exit: 1
+    title: Setup failed
+    detail: A setup or configuration step failed, e.g. writing config permissions.
+    remediation: Check filesystem permissions on the agent config directories.
+  - code: CONFLICT
+    exit: 2
+    title: Resource conflict
+    detail: >-
+      A conflicting operation is already in flight — e.g. a duplicate upload, or `contacts-import
+      start` called again on an importId that is already enqueued.
+    remediation: >-
+      Do not retry. Poll `contacts-import status <importId>`; the in-flight job keeps running. This
+      is the provider's documented duplicate-suppression behaviour — see
+      conventions/landbase-conventions.yml.
+transport_errors:
+  - status: 429
+    detail: Rate limited. Retry-After is returned and the CLI honours it.
+  - status: 524
+    detail: >-
+      Cloudflare edge timeout on long-running searches, documented in the provider's own
+      landbase-search Agent Skill. The run is NOT lost — the CLI auto-polls /runs/latest until
+      completion or --timeout, and `landbase-cli runs latest --session=<id>` resumes it manually.
+gaps:
+  - >-
+    No HTTP-level error catalogue. The gateway's own status codes and response bodies are
+    undocumented, and api.landbase.com answers a Cloudflare bot challenge to anonymous callers, so
+    they cannot be observed either. Everything above is the CLI's translation layer.
+  - No RFC 9457 problem+json, and no `type` URI per error class.

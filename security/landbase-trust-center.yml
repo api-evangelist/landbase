@@ -1,0 +1,38 @@
+generated: '2026-08-23'
+method: probed
+source: https://trust.landbase.com/
+description: >-
+  Landbase operates a public trust center at trust.landbase.com, hosted on Vanta. It returned HTTP
+  200 with a real page (canonical https://trust.landbase.com, <title>Landbase Trust Center</title>,
+  Vanta build 9de42673d566d80a3bb761a085c15754242c3e29, prod environment) on 2026-08-23. The trust
+  center is NOT linked from the landbase.com navigation, footer, pricing page or documentation —
+  it was found by probing the conventional trust.<domain> host, which means most visitors and every
+  automated crawler will miss it.
+url: https://trust.landbase.com/
+platform: Vanta
+http_status: 200
+discoverable_from_site: false
+certifications: []
+certifications_machine_readable: false
+certifications_note: >-
+  The certification and subprocessor lists are rendered client-side by a Vanta React bundle
+  (assets.vanta.com/static/index-trust-report-*.js) that fetches over GraphQL; the served HTML
+  carries only meta tags and no cert names, and Vanta's own API returns 401 to anonymous callers.
+  No certification is therefore recorded here. This is an absence of EVIDENCE, not evidence of
+  absence — a human with a browser may well see SOC 2 or ISO 27001 listed. Because nothing could be
+  verified, no `Compliance` pointer is emitted in apis.yml.
+security_txt: none — /.well-known/security.txt returns 404 on every Landbase host (see well-known/landbase-well-known.yml)
+vulnerability_disclosure: >-
+  None found. No security.txt, no /security page, and no HackerOne / Bugcrowd / Intigriti program
+  surfaced for landbase.com on 2026-08-23. There is no published route for a researcher to report a
+  vulnerability except the general contact form.
+related_public_policies:
+  - {name: Privacy Policy, url: https://www.landbase.com/legal/privacy-policy}
+  - {name: Terms of Service, url: https://www.landbase.com/legal/terms-of-service}
+  - {name: Google Limited Use Policy, url: https://www.landbase.com/google-limited-use-policy}
+data_processing_note: >-
+  Landbase names third parties in its own pricing copy — contact enrichment is "routed through 20+
+  providers automatically, powered by BetterContact", with Bouncer performing email verification.
+  For a B2B contact-data platform processing personal data at scale, that subprocessor disclosure
+  and the trust center are the visible parts of the compliance posture; no DPA, subprocessor list or
+  data-retention statement is reachable without JavaScript.

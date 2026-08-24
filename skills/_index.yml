@@ -1,0 +1,155 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://cli.landbase.com/latest/skills/ — the skill bundle Landbase ships with every landbase-cli
+  release. The manifest at https://cli.landbase.com/latest/skills/manifest.txt lists 26 files
+  (23 SKILL.md packages plus 3 supporting reference/script files); every file below was fetched
+  verbatim on 2026-08-23 and is stored unmodified under skills/landbase-cli/.
+description: >-
+  These are PROVIDER-AUTHORED Agent Skills, not skills API Evangelist generated. Landbase publishes
+  no OpenAPI, so these skill packages — with their frontmatter name/description/when_to_use, their
+  concrete landbase-cli invocations, and their supporting references and scripts — are the closest
+  thing Landbase ships to a machine-readable contract, and they are the surface Claude Code and
+  Codex actually consume. Four are end-to-end "recipes" (ICP capture, lookalike expansion, prospect
+  builder, TAM mapping); the rest are per-tool skills covering search, match, enrichment, dataset
+  pipelines, qualification, imports, and email/LinkedIn campaigns. Landbase also ships a Claude Code
+  plugin (`landbase-cli config permissions`) exposing /landbase-cli:search, /landbase-cli:auth and
+  /landbase-cli:setup.
+publisher: Landbase
+publisher_authored: true
+manifest: https://cli.landbase.com/latest/skills/manifest.txt
+supporting_files:
+  - landbase-cli/tools/dedupe-leads/references/matching-rules.md
+  - landbase-cli/tools/dedupe-leads/scripts/dedupe.py
+  - landbase-cli/tools/presentation/references/brand-system.md
+skills:
+  - file: landbase-cli/recipes/icp-capture/SKILL.md
+    name: icp-capture
+    version: 1.0.0
+    description: Full ICP capture workflow — synthesize from a transcript or structured questions, classify
+      each attribute as must/should/nice, check for similar prior builds, validate scope, propose a search
+      query, and write icp-definition.md for use by prospect-builder and tam-mapping.
+  - file: landbase-cli/recipes/lookalike-expansion/SKILL.md
+    name: lookalike-expansion
+    version: 1.0.0
+    description: Build a lookalike audience from a set of seed companies using the Landbase lookalike
+      engine. Use when the user wants to find companies similar to their customers, a competitor's customer
+      base, or any set of example companies — at any scale from a quick 25-company preview up to a full
+      20K expansion.
+  - file: landbase-cli/recipes/prospect-builder/SKILL.md
+    name: prospect-builder
+    version: 1.0.0
+    description: Standard workflow for building prospect, target, and lead lists with Landbase. Always
+      uses the Landbase API/CLI as the source of truth — never Clay, never default to Apollo.
+  - file: landbase-cli/recipes/tam-mapping/SKILL.md
+    name: tam-mapping
+    version: 1.0.0
+    description: Run a full TAM map using the tam_map_creator agent — validates reference companies, expands
+      the ICP, searches and scores the universe, qualifies a sample, and publishes a TAM result with HTML
+      report.
+  - file: landbase-cli/tools/contact-enrich/SKILL.md
+    name: contact-enrich
+    version: 1.1.0
+    description: Async batch email and phone enrichment for individual leads via workflow contact-enrich
+      — not the same as workflow enrich which adds company/person attributes.
+  - file: landbase-cli/tools/contacts-import/SKILL.md
+    name: contacts-import
+    version: 1.0.0
+    description: Import contacts into the Execution platform via landbase-cli contacts-import — covers
+      building and validating an AI-driven header mapping, tracking an import to completion, and repairing
+      failures using the server's authoritative header list.
+  - file: landbase-cli/tools/dataset-management/SKILL.md
+    name: dataset-management
+    version: 1.1.0
+    description: Inspect, preview, download, and manage Landbase datasets — fields discovery, row previews,
+      lineage, and download.
+  - file: landbase-cli/tools/dataset-pipeline/SKILL.md
+    name: dataset-pipeline
+    version: 1.2.0
+    description: The full landbase-cli dataset pipeline — upload → onboard → match → enrich → qualify/research
+      — and how to read each step's output dataset ID to feed the next step.
+  - file: landbase-cli/tools/dedupe-leads/SKILL.md
+    name: dedupe-leads
+    version: 1.0.0
+    description: Deduplicate a CSV of leads or contacts by email or company+name, keeping the most complete
+      record.
+  - file: landbase-cli/tools/landbase-email-campaigns/SKILL.md
+    name: landbase-email-campaigns
+    version: null
+    description: Create and launch outbound email campaigns from an imported audience via landbase-cli.
+      Use when the user wants to build, personalize, send, or check an email campaign — covers the create
+      -> audience -> messages -> coverage -> launch flow, the per-contact personalized-CSV path, and the
+      "launch != sends" gotcha.
+  - file: landbase-cli/tools/landbase-feedback/SKILL.md
+    name: landbase-feedback
+    version: null
+    description: Send feedback or a bug report to the Landbase team via landbase-cli. Use when the user
+      wants to report a problem, share feedback about Landbase, or flag that a landbase-cli command failed.
+  - file: landbase-cli/tools/landbase-linkedin-campaigns/SKILL.md
+    name: landbase-linkedin-campaigns
+    version: null
+    description: Create and launch outbound LinkedIn campaigns from an imported audience via landbase-cli.
+      Use when the user wants to build, personalize, send, or check a LinkedIn campaign — covers the create
+      -> audience -> messages -> coverage -> launch flow, the per-contact personalized-CSV path, and the
+      "launch != sends" gotcha.
+  - file: landbase-cli/tools/landbase-quickstart/SKILL.md
+    name: landbase-quickstart
+    version: 1.0.0
+    description: Run a quick Landbase demo to show a new user what landbase-cli can do — a natural-language
+      audience build (e.g. CFOs at LA entertainment companies), end to end.
+  - file: landbase-cli/tools/landbase-search/SKILL.md
+    name: landbase-search
+    version: 1.3.0
+    description: Reference for landbase-cli search — query patterns that invoke each user-facing tool,
+      scoping a contact search to the companies in a dataset you own, scope-based routing (build with
+      --mode=default vs self-serve refine with workflow enrich + workflow transform vs --mode=research),
+      --download routing, session management, 524 recovery, and concurrency limits.
+  - file: landbase-cli/tools/list-similarity-check/SKILL.md
+    name: list-similarity-check
+    version: 1.0.0
+    description: Check whether a similar prospect list has been built before by comparing an ICP against
+      a history of past builds. Use before starting a new prospect build to surface reusable prior work.
+  - file: landbase-cli/tools/match-lookup/SKILL.md
+    name: match-lookup
+    version: 1.0.0
+    description: Resolve any external record — a domain, LinkedIn URL, name, or email — to its entity
+      in the Landbase graph using match company or match person.
+  - file: landbase-cli/tools/presentation/SKILL.md
+    name: presentation
+    version: 1.0.0
+    description: Generate HTML output using the Landbase visual identity. Default is a responsive one-pager.
+      Switch to slide mode for presentations, slide decks, or PDF export.
+  - file: landbase-cli/tools/qualify-leads/SKILL.md
+    name: qualify-leads
+    version: 1.1.0
+    description: Run AI qualification on a Landbase dataset to score each row as qualified or not against
+      custom yes/no criteria. Use when the user wants to filter a prospect list, score leads against ICP
+      criteria, or find the best-fit accounts in a dataset.
+  - file: landbase-cli/tools/query-assist/SKILL.md
+    name: query-assist
+    version: 1.1.0
+    description: Translate an ICP definition into a well-formed Landbase search query with the standard
+      attribute pack, route signals by data scope to the right execution path (standard NL search, self-serve
+      enrich+transform refine, or advanced SQL), and execute to produce a downloadable prospect dataset.
+  - file: landbase-cli/tools/transcript-synthesis/SKILL.md
+    name: transcript-synthesis
+    version: 1.0.0
+    description: Extract a structured ICP definition from a call transcript, meeting notes, or any freeform
+      text. Classifies each attribute as must/should/nice, identifies seed companies for lookalike expansion,
+      and writes a reusable icp-definition.md.
+  - file: landbase-cli/tools/workflow-enrich/SKILL.md
+    name: workflow-enrich
+    version: 1.1.0
+    description: Batch attribute enrichment on a Landbase dataset — adds company and person fields (industry,
+      size, description, technologies, etc.) from the Landbase graph at scale.
+  - file: landbase-cli/tools/workflow-monitor/SKILL.md
+    name: workflow-monitor
+    version: 1.2.0
+    description: Report live progress and a rolling ETA while a Landbase workflow run executes, by polling
+      the REST endpoint directly (no CLI binary) — works the same in local and cloud Claude Code sessions.
+      Also covers stopping a run.
+  - file: landbase-cli/tools/workflow-transform/SKILL.md
+    name: workflow-transform
+    version: 1.1.0
+    description: Run custom SQL against a Landbase dataset (uploaded CSV, search result, or pipeline output)
+      to filter, reshape, or derive new columns. The SQL operates on the columns in the input dataset.

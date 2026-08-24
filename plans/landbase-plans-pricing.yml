@@ -1,0 +1,91 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+provider: Landbase
+providerId: landbase
+generated: '2026-08-23'
+method: searched
+created: '2026-08-23'
+modified: '2026-08-23'
+source: https://www.landbase.com/pricing
+description: >-
+  Landbase publishes real, self-serve, per-tier prices — unusual for B2B data, and it says so
+  explicitly on the page ("Apollo gates programmatic access at $357/mo minimum, ZoomInfo & 6Sense
+  require annual contracts"). Pricing is a credit bundle: you buy a monthly pool of credits at a
+  volume-discounted unit rate and spend them per action. Search and lookalike expansion cost
+  nothing; only delivered, verified results are billed, and an unverified result ("miss") is never
+  charged. A free tier of 1,000 credits requires no credit card.
+docs: https://www.landbase.com/pricing
+currency: USD
+model: credit-bundle subscription with usage-priced actions
+billing_period: monthly
+free_tier:
+  credits: 1000
+  price: 0
+  credit_card_required: false
+  expiry: none stated
+  note: >-
+    The pricing page states 1,000 free credits in two places and "$49 free credits" in the sign-up
+    callout and CLI demo strip; the two figures are consistent at the $0.033 headline rate
+    (1,000 x $0.033 = $33) only loosely, and Landbase does not reconcile them.
+plan_count: 4
+plans:
+  - id: landbase-starter-499
+    name: 15,000 Credits
+    type: subscription
+    price: 499
+    currency: USD
+    billing_period: month
+    included_quota: 15000 credits
+    unit_rate: 0.033
+    unit: credit
+    equivalent: ~15,000 verified emails or ~1,500 phone numbers
+    overage: not published
+  - id: landbase-growth-1999
+    name: 75,000 Credits
+    type: subscription
+    price: 1999
+    currency: USD
+    billing_period: month
+    included_quota: 75000 credits
+    unit_rate: 0.0267
+    unit: credit
+    equivalent: ~75,000 verified emails or ~7,500 phone numbers
+    overage: not published
+  - id: landbase-scale-4999
+    name: 200,000 Credits
+    type: subscription
+    price: 4999
+    currency: USD
+    billing_period: month
+    included_quota: 200000 credits
+    unit_rate: 0.025
+    unit: credit
+    equivalent: ~200,000 verified emails or ~20,000 phone numbers
+    overage: not published
+  - id: landbase-enterprise
+    name: Enterprise
+    type: custom
+    price: null
+    currency: USD
+    billing_period: custom
+    included_quota: custom credits
+    unit_rate: null
+    contact: https://www.landbase.com/contact
+    note: >-
+      "Enterprise pricing, custom rate cards, and volume discounts." Premium datasets (Signals,
+      People Signals) are enterprise-only and must be enabled per workspace by Landbase sales — see
+      https://www.landbase.com/docs/capabilities/premium-datasets.
+action_pricing:
+  - {action: Search, credits: 0, usd: 0, note: Free.}
+  - {action: Lookalike Expansion, credits: 0, usd: 0, note: Free.}
+  - {action: Online AI Qualification, credits: 0.2, usd: ~0.01}
+  - {action: Advanced Dataset Creator, credits: 25-50, usd: ~0.25-1.50, note: The page also prints a "$0.82 - $1.65" figure for the same row.}
+  - {action: Email Enrichment, credits: 1, usd: 0.033, unit: per verified email}
+  - {action: Phone Enrichment, credits: 10, usd: 0.33, unit: per verified mobile}
+  - {action: Miss (unverified result), credits: 0, usd: 0, note: Never charged.}
+coverage_note: >-
+  Contact enrichment is routed through 20+ providers automatically, powered by BetterContact, with
+  Bouncer used for email verification — Landbase names its subprocessors on the pricing page.
+api_access_gating: >-
+  None. Programmatic access via landbase-cli is available on the free tier — the pricing page's own
+  comparison makes ungated programmatic access the headline differentiator.

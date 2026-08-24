@@ -1,0 +1,141 @@
+generated: '2026-08-23'
+method: probed
+source: >-
+  Direct HTTP probes of the /.well-known/ discovery surface on every Landbase host reachable from
+  apis.yml and the documentation (api.landbase.com — the platform gateway named by
+  LANDBASE_PLATFORM_API_URL; www.landbase.com; docs.landbase.com; platform.landbase.com;
+  gtm.landbase.com; cli.landbase.com). Status codes are what each path really returned on
+  2026-08-23.
+description: >-
+  Two real documents were found, both on the API gateway api.landbase.com:
+  /.well-known/openid-configuration and the /.well-known/jwks.json it points at. They are the only
+  machine-readable artifacts Landbase serves anywhere on its own infrastructure, and they are served
+  from behind the Cloudflare bot challenge that answers 403 for every other path on that host — the
+  /.well-known/ prefix is evidently allowlisted. The discovery document is minimal: it carries
+  issuer, jwks_uri and id_token_signing_alg_values_supported only, and omits every endpoint an OIDC
+  relying party needs (authorization_endpoint, token_endpoint, response_types_supported), so it is
+  not an OIDC-conformant discovery document — see conformance/landbase-conformance.yml.
+  gtm.landbase.com is a single-page app that answers 200 with an HTML shell for every /.well-known/
+  path; those are recorded as misses, not documents. www.landbase.com answers 404 with an explicit
+  "Invalid .well-known request" body for the whole prefix.
+hosts:
+  - host: https://api.landbase.com
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        type: application/json
+        file: landbase-openid-configuration.json
+      - path: /.well-known/jwks.json
+        status: 200
+        type: application/json
+        file: landbase-jwks.json
+        note: Referenced by jwks_uri in the discovery document; one RS256 signing key, kid platform-jwt-1.
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://www.landbase.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://platform.landbase.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://cli.landbase.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://gtm.landbase.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        note: >-
+          Not a document. gtm.landbase.com is a Next.js SPA whose catch-all returns the same ~46KB
+          HTML shell with HTTP 200 for every path, including /openapi.json and /swagger.json.
+          Recorded as a miss.
+      - path: /.well-known/openid-configuration
+        status: 200
+        note: SPA catch-all HTML shell — not a document.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        note: SPA catch-all HTML shell — not a document.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        note: SPA catch-all HTML shell — not a document.
+      - path: /.well-known/api-catalog
+        status: 200
+        note: SPA catch-all HTML shell — not a document.
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        note: SPA catch-all HTML shell — not a document.
+      - path: /.well-known/agent-card.json
+        status: 200
+        note: SPA catch-all HTML shell — not an A2A agent card. No agent card exists on any host.
+      - path: /.well-known/agent.json
+        status: 200
+        note: SPA catch-all HTML shell — not an A2A agent card.
+  - host: https://docs.landbase.com
+    documents:
+      - path: /robots.txt
+        status: 200
+        note: >-
+          Not a /.well-known/ document, but the only machine-readable consent signal Landbase
+          publishes — it carries an explicit Content-Signal line
+          (ai-train=yes, search=yes, ai-input=yes). Recorded here because nothing else on the estate
+          expresses AI-use preferences.
+      - path: /llms.txt
+        status: 200
+        note: Saved verbatim to llms/landbase-llms.txt.
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404

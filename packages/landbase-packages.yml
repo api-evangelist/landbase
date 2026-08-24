@@ -1,0 +1,81 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://www.landbase.com/docs/install and the public release bucket at https://cli.landbase.com/
+  (GCS bucket landbase-cli-releases, object listing readable anonymously). Registry checks run
+  2026-08-23 against registry.npmjs.org, pypi.org, rubygems.org, crates.io, api.nuget.org and
+  pkg.go.dev.
+description: >-
+  Landbase ships exactly one first-party client: the `landbase-cli` binary. There is no language
+  SDK. Nothing named landbase / landbase-cli / @landbase/* exists on npm, PyPI, RubyGems, crates.io
+  or NuGet — every lookup returned 404 — so this is a CDN-distributed binary with no package-registry
+  metadata endpoint. Versions and dates below are read from the release bucket's own object
+  listing (LastModified), which is the only dated publication record Landbase exposes. The
+  distribution is actively maintained: 40 minor releases between 2026-04-20 (v0.2.0) and 2026-08-14
+  (v0.40.0).
+packages:
+  - language: go
+    registry: cdn
+    name: landbase-cli
+    url: https://cli.landbase.com/latest/version.txt
+    distribution: >-
+      Prebuilt single-file binaries per platform: landbase-cli-darwin-arm64, landbase-cli-darwin-x64,
+      landbase-cli-linux-arm64, landbase-cli-linux-x64, landbase-cli-windows-x64.exe, each release
+      accompanied by a checksums.txt.
+    install: curl -fsSL https://cli.landbase.com/install.sh | bash
+    install_windows: "$ProgressPreference = 'SilentlyContinue'; irm https://cli.landbase.com/install.ps1 | iex"
+    self_update: landbase-cli update
+    official: true
+    version: 0.40.0
+    published: '2026-08-14'
+    version_source: https://cli.landbase.com/latest/version.txt
+    published_source: >-
+      GCS object listing for https://cli.landbase.com/ — v0.40.0/checksums.txt LastModified
+      2026-08-14T12:02:40.799Z
+    note: >-
+      Language inferred as Go from the single-file cross-compiled binary matrix; Landbase does not
+      state the implementation language and the source repository is not public
+      (github.com/landbaseapp/landbase-cli, which the FAQ names for bug reports, returns 404 to
+      anonymous callers).
+  - language: shell
+    registry: cdn
+    name: install.sh
+    url: https://cli.landbase.com/install.sh
+    official: true
+    version: null
+    published: '2026-08-14'
+    published_source: >-
+      GCS object listing — latest/install.sh LastModified 2026-08-14T12:02:48.100Z
+    note: >-
+      The installer itself is unpinned: https://cli.landbase.com/install.sh always floats to the
+      newest build, so a consumer piping it to bash cannot tell from the URL which version they are
+      about to install. LANDBASE_VERSION pins a version in the PowerShell installer only. Recorded
+      as version: null because there is nothing in the URL or a metadata endpoint to read a version
+      from.
+  - language: powershell
+    registry: cdn
+    name: install.ps1
+    url: https://cli.landbase.com/install.ps1
+    official: true
+    version: null
+    published: '2026-08-14'
+    published_source: >-
+      GCS object listing — latest/install.ps1 LastModified 2026-08-14T12:02:49.342Z
+    note: Unpinned like install.sh; accepts LANDBASE_VERSION to pin an install.
+registry_checks:
+  - registry: npm
+    queried: ['landbase', 'landbase-cli', '@landbase/cli', '@landbase/sdk', 'landbase-sdk']
+    result: 404 on every name — no Landbase package published
+  - registry: pypi
+    queried: ['landbase', 'landbase-cli', 'landbase-sdk']
+    result: 404 on every name
+  - registry: other
+    queried: ['rubygems', 'crates.io', 'nuget', 'maven-central', 'pkg.go.dev']
+    result: not published
+defects:
+  - id: dead-install-host
+    detail: >-
+      The published FAQ (https://www.landbase.com/docs/faq) tells users to install with
+      `curl -fsSL https://install.landbase.com | bash` and
+      `irm https://install.landbase.com/windows | iex`. install.landbase.com does not resolve in DNS
+      (NXDOMAIN, 2026-08-23). Every other page uses the working cli.landbase.com host.

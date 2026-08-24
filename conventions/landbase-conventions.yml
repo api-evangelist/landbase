@@ -1,0 +1,197 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://www.landbase.com/docs/what-can-you-do-with-the-cli, the reference pages under
+  https://www.landbase.com/docs/reference/ (auth, error-codes, exit-codes, env-vars, config-files,
+  datasets, workflow, contacts-import, contact-enrich, email-campaigns, linkedin-campaigns,
+  output-schemas), the explanation pages (how-sessions-work, workflows-vs-commands, platform-vs-legacy),
+  and Landbase's own published Agent Skill https://cli.landbase.com/latest/skills/tools/landbase-search/SKILL.md.
+description: >-
+  The cross-cutting runtime semantics of the Landbase surface. Landbase has no REST convention set
+  to document because it publishes no REST API — the contract is the CLI, and these are its
+  conventions: JSON on stdout, a stable error envelope on stderr, numeric exit codes, ids that chain
+  one command into the next, sessions that thread an agent conversation, and long-running work
+  expressed as workflow runs you either --wait on or poll. Read alongside
+  errors/landbase-error-codes.yml, authentication/landbase-authentication.yml,
+  rate-limits/landbase-rate-limits.yml and lifecycle/landbase-lifecycle.yml.
+
+base_url: https://api.landbase.com
+api_style: >-
+  CLI-over-HTTPS. The binary is the documented client; the gateway's wire protocol is not published
+  and api.landbase.com serves a Cloudflare bot challenge to anonymous callers on every path except
+  /.well-known/.
+
+authentication:
+  scheme: OAuth browser session (lbs_) by default; long-lived API key (lbk_) in legacy mode
+  detail: authentication/landbase-authentication.yml
+
+output_contract:
+  stdout: JSON — the success payload, one document per command.
+  stderr: JSON error envelope with a stable error.code, plus progress lines during --watch/--wait.
+  exit_codes: 0 success, 1 caller fix, 2 API/resource error, 3 auth, 4 network/timeout.
+  schemas: https://www.landbase.com/docs/reference/output-schemas
+  search_response_fields: [run_id, session_id, status, content, dataset_id, created_at]
+  design_intent: >-
+    Explicitly designed to be machine-read — "Most commands return JSON, which makes the CLI easy
+    for agents and scripts to read" — and the docs show jq pipelines as the normal composition
+    mechanism.
+
+idempotency:
+  supported: partial
+  api_wide_key: false
+  mechanism: >-
+    There is no Idempotency-Key header and no API-wide idempotency contract. Landbase instead
+    documents duplicate suppression on the specific write surfaces where a retry would be
+    expensive, using a caller-supplied resource id.
+  surfaces:
+    - operation: contacts-import start
+      key: importId (optional integer in the request body)
+      behaviour: >-
+        Supplying an importId resumes an existing import instead of creating a second one. Calling
+        start again on an importId that is already enqueued returns CONFLICT, and the documentation
+        is explicit that the caller must NOT retry — "the in-flight job keeps running". A retry
+        therefore cannot double-import a tag.
+      docs: https://www.landbase.com/docs/reference/contacts-import
+    - operation: email-campaigns messages / linkedin-campaigns messages
+      key: the audience CSV itself
+      behaviour: "Re-uploading a fixed file is a full replace (idempotent)."
+      docs: https://www.landbase.com/docs/reference/email-campaigns
+    - operation: upload
+      key: dataset name
+      behaviour: A duplicate upload is rejected with CONFLICT rather than silently creating a second dataset.
+      docs: https://www.landbase.com/docs/reference/error-codes
+  gaps:
+    - >-
+      search, enrich, match, contact-enrich submit and campaign launch carry no documented
+      idempotency key. An agent that retries a timed-out `contact-enrich submit` has no published
+      way to know whether the first batch was accepted — the documented recovery is to hold the
+      request_id from the error meta and call `contact-enrich get`, which works only if the first
+      call got far enough to return one.
+    - No Idempotency-Replayed indicator or equivalent, so a caller cannot tell a replay from a fresh execution.
+
+reversibility:
+  grade: documented
+  write_surface: true
+  summary: >-
+    Landbase's write surface is real (delete a dataset, import contacts into an account, launch an
+    outbound email or LinkedIn campaign against live people) and its reversal story is thin. One
+    reversal operation exists and is undocumented on the reference pages; the two highest-consequence
+    actions have no published undo and no stated window.
+  operations:
+    - action: Cancel a running workflow
+      reversal: workflow cancel
+      operation_id: workflow cancel
+      window: null
+      window_stated: false
+      evidence: >-
+        https://cli.landbase.com/v0.38.0/notice.json — "workflow: cancel a running workflow run
+        (#232)". Not present on https://www.landbase.com/docs/reference/workflow, so an agent
+        reading the documentation would not know it exists.
+      grade: documented
+    - action: Delete a dataset
+      reversal: none
+      window: null
+      window_stated: false
+      evidence: >-
+        https://www.landbase.com/docs/reference/datasets documents `datasets delete <dataset-id>
+        [--yes]` and no restore, undelete or retention window. --yes exists only to skip the
+        confirmation prompt, which is a guard, not a reversal.
+      grade: none
+    - action: Import contacts into an account under a tag
+      reversal: none
+      window: null
+      window_stated: false
+      evidence: >-
+        https://www.landbase.com/docs/reference/contacts-import documents start/status/wait/schema/
+        resolve. There is no un-import, and the terminal `partial` phase explicitly leaves some rows
+        imported after a later failure with no documented way to roll them back.
+      grade: none
+    - action: Launch an outbound email or LinkedIn campaign
+      reversal: none
+      window: null
+      window_stated: false
+      evidence: >-
+        https://www.landbase.com/docs/how-to/launch-a-campaign states that launch "enrolls the
+        audience and hands off to the scheduler" and that reaching `scheduled` is not the same as
+        messages being sent — sends are throttled by inbox/LinkedIn caps and the account send
+        window (default 06:00-15:00 PT). That gap is the only practical stop opportunity, and no
+        pause, stop, unenroll or cancel command is documented for either channel in the CLI. The
+        docs say the richer campaign dashboards live in the web platform.
+      grade: none
+      consequence: >-
+        This is the sharpest agent-safety gap on the surface: an agent can send real email and real
+        LinkedIn connection requests to real named people from one command, and the published CLI
+        reference gives it nothing to call to take that back.
+  dry_run_mode:
+    supported: partial
+    detail: >-
+      No --dry-run flag anywhere. Two rehearsal affordances exist: the
+      --agent=advanced_dataset_creator flow proposes a query and waits for an explicit "yes, run it"
+      in the same session before executing, and campaign launch is blocked until every matched
+      contact has a complete message set, with `coverage` and `audience` letting a caller inspect
+      exactly who would be messaged first.
+
+pagination:
+  style: limit-only
+  request_params:
+    limit: "--limit=<n> on datasets list and similar list commands"
+  response_fields: null
+  cursor: false
+  notes: >-
+    No cursor, offset, page token or has_more field is documented, and the output-schemas reference
+    describes no pagination envelope. Result ceilings are per-tool rather than per-page — Search
+    Companies returns up to 10,000 companies per query, Expand Lookalikes up to 20,000, Scout
+    Lookalikes 25 by default. Bulk retrieval is by publish-and-download, not by paging.
+
+bulk_and_async:
+  model: >-
+    Long-running work is a workflow run over a dataset. Commands return a run/dataset id
+    immediately; --wait blocks to a terminal state, otherwise poll `workflow status`.
+  chaining: >-
+    Since v0.40.0 steps chain on output_dataset_id; before that the documented method was
+    `datasets lineage --direction=children`, which the docs still describe.
+  polling_guidance: >-
+    contacts-import wait uses 5s, 10s then a 20s cap with a 30-minute overall timeout. The docs warn
+    against sub-second polling because it "may trip rate limits".
+  publish_then_download: >-
+    .jsonl / .jsonl.gz / .csv require a publish workflow first (about 30-90 seconds, "a few
+    minutes" for large sets); .parquet downloads the native dataset bytes with no publish step.
+
+sessions_and_tracing:
+  request_id: null
+  session: >-
+    --session=<label> threads follow-up prompts into one agent conversation. Labels are local
+    (~/.landbase/sessions.json); the server-side identity is a UUID echoed back as session_id in
+    every search response and is what links a CLI run to the platform activity view.
+  run_id: Every search creates an agent run with a run_id, retrievable via `runs get` / `runs list`.
+  agent_attribution: >-
+    CLAUDE_CODE_SESSION_ID and CODEX_THREAD_ID are read from the environment and associated with the
+    run, and since v0.34.0 the CLI resolves and sends Claude Code / Codex session titles. Landbase
+    is deliberately recording which agent drove which run.
+  telemetry_opt_out: LANDBASE_NO_TELEMETRY=1
+
+versioning:
+  surface: client only
+  scheme: semver on landbase-cli (currently 0.40.0)
+  api_version_header: none published
+  server_enforcement: The gateway can reject an outdated client with UPGRADE_REQUIRED.
+  detail: lifecycle/landbase-lifecycle.yml
+
+error_envelope:
+  format: vendor JSON on stderr
+  rfc9457: false
+  detail: errors/landbase-error-codes.yml
+
+rate_limit_signaling:
+  status: 429
+  headers: [Retry-After]
+  envelope_field: error.meta.retry_after_seconds
+  client_behaviour: 3 automatic retries with 5s/10s/20s backoff, honouring Retry-After.
+  detail: rate-limits/landbase-rate-limits.yml
+
+security_conventions:
+  credential_storage: ~/.landbase/*.json at mode 0600.
+  url_allowlist: >-
+    LANDBASE_API_BASE_URL and LANDBASE_INSTALL_URL are allowlisted to *.landbase.com / localhost /
+    127.0.0.1 unless an explicit override variable is set — a deliberate control against pointing a
+    credential-bearing client, or an installer, at an attacker's host.

@@ -1,0 +1,165 @@
+generated: '2026-08-23'
+method: probed
+source: >-
+  https://api.landbase.com/.well-known/openid-configuration (200),
+  https://api.landbase.com/.well-known/jwks.json (200),
+  https://docs.landbase.com/robots.txt (200),
+  https://docs.landbase.com/llms.txt (200),
+  https://cli.landbase.com/latest/skills/manifest.txt (200),
+  plus the auth, error-code and CLI reference pages under https://www.landbase.com/docs/.
+description: >-
+  What Landbase does and does not conform to, judged from artifacts it actually serves rather than
+  from marketing claims. The picture is lopsided: strong on the newest agent-facing conventions
+  (llms.txt, Agent Skills, an explicit Content-Signal declaration) and weak on the established API
+  ones (no OpenAPI, no RFC 9457, a stub OIDC document, no security.txt). This is a company that
+  arrived after the agent conventions existed and skipped the REST-era ones entirely.
+entries:
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: partial
+    evidence: >-
+      A browser consent flow issues short-lived lbs_ session tokens, which is OAuth-shaped, but
+      neither /.well-known/oauth-authorization-server nor /.well-known/oauth-protected-resource
+      exists (both 404 on api.landbase.com), no authorization or token endpoint is published, no
+      scopes are documented, and RFC 8414 metadata is absent. A client cannot discover the flow —
+      only the Landbase CLI knows how to drive it.
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: false
+    evidence: >-
+      https://api.landbase.com/.well-known/openid-configuration returns 200 with exactly three
+      fields — issuer (platform.landbase.com), jwks_uri (/.well-known/jwks.json) and
+      id_token_signing_alg_values_supported ([RS256]). The specification's REQUIRED
+      authorization_endpoint, response_types_supported and subject_types_supported are all missing,
+      and jwks_uri is a relative reference where the spec requires a URL. The linked JWKS is valid
+      (one RS256 key, kid platform-jwt-1), so the document is sufficient to verify a platform JWT
+      and insufficient for anything else.
+  - id: jwks-rfc7517
+    name: JSON Web Key Set (RFC 7517)
+    conforms: true
+    evidence: >-
+      https://api.landbase.com/.well-known/jwks.json returns a well-formed JWKS — one RSA key with
+      kty/use/alg/kid/n/e. This is the single unambiguously conformant machine-readable artifact on
+      the Landbase estate.
+  - id: openapi
+    name: OpenAPI
+    conforms: false
+    evidence: >-
+      No OpenAPI is published for api.landbase.com. Every candidate path
+      (/openapi.json, /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs, /docs, /redoc)
+      returns a Cloudflare bot challenge (403) on the gateway, an SPA HTML shell (200) on
+      gtm.landbase.com, and NoSuchKey (404) on cli.landbase.com. The one spec reachable anywhere on
+      the estate — https://docs.landbase.com/api-reference/openapi.json — is Mintlify's stock
+      "OpenAPI Plant Store" sample (info.title "OpenAPI Plant Store", servers
+      http://sandbox.mintlify.com) left in the docs template. It describes nothing Landbase
+      operates and was deliberately NOT saved to this repository.
+  - id: rfc9457
+    name: RFC 9457 Problem Details
+    conforms: false
+    evidence: >-
+      Errors use a vendor JSON envelope on stderr — {"error":{"code","message","meta"}} — with no
+      type URI, title, status or detail members and no application/problem+json media type. The
+      registry is stable and documented, but it is not Problem Details. See
+      errors/landbase-error-codes.yml.
+  - id: rfc8594
+    name: RFC 8594 Sunset header
+    conforms: false
+    evidence: No Sunset or Deprecation header, and no deprecation policy of any kind. See lifecycle/landbase-lifecycle.yml.
+  - id: rfc9116
+    name: RFC 9116 security.txt
+    conforms: false
+    evidence: >-
+      /.well-known/security.txt returns 404 on www.landbase.com, api.landbase.com,
+      platform.landbase.com, docs.landbase.com and cli.landbase.com. There is no published channel
+      for a security researcher.
+  - id: idempotency
+    name: Idempotent write semantics
+    conforms: partial
+    evidence: >-
+      No Idempotency-Key header. Duplicate suppression is documented per-operation via a
+      caller-supplied importId on contacts-import (re-calling returns CONFLICT and the in-flight job
+      is not duplicated), a full-replace semantic on campaign message uploads, and CONFLICT on a
+      duplicate upload. Search, enrich, contact-enrich submit and campaign launch have no
+      idempotency contract. See conventions/landbase-conventions.yml.
+  - id: pagination
+    name: Standard pagination
+    conforms: false
+    evidence: >-
+      Only --limit is documented. No cursor, offset, page token, has_more field or Link header
+      appears anywhere in the output-schemas reference. Bulk retrieval is publish-then-download.
+  - id: retry-after
+    name: HTTP 429 with Retry-After
+    conforms: true
+    evidence: >-
+      The gateway returns 429 with Retry-After on rate-limit exhaustion, the CLI honours it with
+      3 retries at 5s/10s/20s, and the error envelope carries meta.retry_after_seconds. Published in
+      Landbase's own landbase-search Agent Skill. RFC 9239-style RateLimit-* budget headers are not
+      returned.
+  - id: llmstxt
+    name: llms.txt
+    conforms: true
+    evidence: >-
+      https://docs.landbase.com/llms.txt (200) and https://docs.landbase.com/llms-full.txt (200,
+      ~30KB) are both served, and every documentation page has a .md twin at <path>.md. The index is
+      incomplete, though — llms.txt lists 6 pages while the docs sitemap lists 68, so an agent that
+      trusts llms.txt as the map never sees the reference section, the error codes or the tool
+      library.
+  - id: agent-skills
+    name: Agent Skills
+    conforms: true
+    evidence: >-
+      https://cli.landbase.com/latest/skills/manifest.txt enumerates 26 files — 23 SKILL.md packages
+      with name/description/when_to_use/version frontmatter, plus supporting references and a
+      script — shipped with every CLI release and installed for Claude Code and Codex. Landbase also
+      ships a Claude Code plugin exposing /landbase-cli:search, /landbase-cli:auth and
+      /landbase-cli:setup. See skills/_index.yml.
+  - id: content-signal
+    name: Content Signals (AI-use preference declaration)
+    conforms: true
+    evidence: >-
+      https://docs.landbase.com/robots.txt carries an explicit
+      "Content-Signal: ai-train=yes, search=yes, ai-input=yes" line — a machine-readable, permissive
+      declaration of AI-use preference on the documentation host. www.landbase.com's robots.txt does
+      not carry one. This is the estate's only consent/identity signal.
+  - id: mcp
+    name: Model Context Protocol
+    conforms: false
+    evidence: >-
+      No MCP server, hosted or stdio. No mcp.landbase.com (NXDOMAIN), nothing on npm or PyPI,
+      and no mention of MCP in the documentation or in any of the 23 published skills except as a
+      consumer of OTHER vendors' servers (the skills call a Google Drive/Sheets MCP to deliver
+      output). Landbase's agent bet is the CLI plus Skills, not MCP. See mcp/landbase-mcp.yml.
+  - id: a2a
+    name: A2A Agent Card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json return 404 on api.landbase.com,
+      www.landbase.com, platform.landbase.com and cli.landbase.com. gtm.landbase.com returns 200
+      for both, but with the same SPA HTML shell it returns for every path — not an agent card. No
+      card was saved.
+  - id: asyncapi
+    name: AsyncAPI / webhooks
+    conforms: 'n/a'
+    evidence: >-
+      Landbase publishes no event, streaming or webhook surface at all — the word "webhook" does not
+      appear anywhere in the documentation. Asynchronous work is expressed as polling (--wait,
+      workflow status, contacts-import wait) rather than callbacks, so there is nothing to describe
+      in AsyncAPI. Not a penalty; there is no event surface to miss.
+domain_standard:
+  market: B2B go-to-market data, contact enrichment and outbound sales engagement
+  standard_declared: none
+  conforms: false
+  evidence: >-
+    No domain standard is declared anywhere in the contract or the documentation. The identifiers
+    Landbase's surface actually pivots on are proprietary or third-party — LinkedIn profile URLs,
+    company domains, and its own dataset/run/session ids — and the field reference
+    (https://www.landbase.com/docs/reference/available-fields) is a bespoke vocabulary. This market
+    has no widely-adopted machine-readable interchange standard of the kind SCIM, OData, OpenRTB or
+    HL7v2 provide elsewhere, so this is recorded as an honest absence and not a deficiency.
+  probed_for: [scim, odata, openrtb, activitypub, oai-pmh, json-api]
+compliance_programs:
+  published_certifications: []
+  note: >-
+    A Vanta trust center is served at https://trust.landbase.com/ (200) but its certification list
+    is rendered client-side and could not be read anonymously, so no certification is asserted here
+    and no `Compliance` pointer is emitted. See security/landbase-trust-center.yml.

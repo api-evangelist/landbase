@@ -1,0 +1,113 @@
+generated: '2026-08-23'
+method: searched
+source: >-
+  https://www.landbase.com/docs/what-can-you-do-with-the-cli plus the per-command reference pages
+  under https://www.landbase.com/docs/reference/ (fetched as markdown from docs.landbase.com/*.md),
+  https://www.landbase.com/docs/install and https://www.landbase.com/docs/reference/env-vars.
+description: >-
+  `landbase-cli` is Landbase's primary — and only public — programmable interface. It is not a
+  convenience wrapper over a documented REST API; it IS the documented product surface, and the
+  gateway it calls (api.landbase.com) publishes no OpenAPI. Every command writes JSON to stdout and
+  a JSON error envelope to stderr with a stable `error.code`, which is what makes it usable by
+  Claude Code, Codex and shell scripts. The binary itself is catalogued in
+  packages/landbase-packages.yml.
+docs: https://www.landbase.com/docs
+repo: https://github.com/landbaseapp/landbase-cli
+repo_status: >-
+  404 to anonymous callers on 2026-08-23 — the FAQ points bug reports at this repository but it is
+  not public.
+version: 0.40.0
+install:
+  macos_linux: curl -fsSL https://cli.landbase.com/install.sh | bash
+  windows: "$ProgressPreference = 'SilentlyContinue'; irm https://cli.landbase.com/install.ps1 | iex"
+  agent: Install Landbase CLI using https://cli.landbase.com/latest/agent-install.txt
+  self_update: landbase-cli update
+config_dir: ~/.landbase (config.json, sessions.json, platform.json — all mode 0600)
+commands:
+  auth:
+    - {name: auth login, description: "Browser OAuth sign-in; --key pastes a legacy lbk_ API key, --force re-authenticates over a stale session."}
+    - {name: auth status, description: Show the active key/session and which base URL is in use.}
+    - {name: auth logout, description: Remove the stored credential.}
+    - {name: doctor, description: "Self-diagnosis for install and auth problems (documented in the FAQ, not in the reference)."}
+  search_and_runs:
+    - {name: search, description: "Natural-language audience build. Returns run_id, session_id, status, content, dataset_id, created_at. --agent=advanced_dataset_creator switches to the SQL-backed builder; --session=<label> continues a thread; --download[=path] writes .jsonl/.jsonl.gz/.csv/.parquet."}
+    - {name: runs list, description: List prior agent runs for a session label or session id.}
+    - {name: runs get, description: Fetch one agent run by id.}
+  records:
+    - {name: match person, description: Resolve a person from first/last name plus a company anchor, or a LinkedIn URL.}
+    - {name: match company, description: Resolve a company from a website, name or id.}
+    - {name: enrich, description: Synchronous single-record enrichment for person and/or company fields (--company-fields, --person-fields).}
+    - {name: contact-enrich submit, description: "Asynchronous batch email/phone enrichment; accepts .json, .jsonl/.ndjson or stdin, returns a request_id, --wait polls to a terminal status (default ceiling ~10 minutes)."}
+    - {name: contact-enrich get, description: Fetch a contact-enrichment batch by request_id — the documented resume path after a --wait timeout.}
+  datasets:
+    - {name: upload, description: Upload a CSV or Excel file as a dataset; returns a dataset id.}
+    - {name: datasets list, description: List datasets in the workspace.}
+    - {name: datasets show, description: Inspect a dataset; --include-runs attaches its runs.}
+    - {name: datasets lineage, description: Walk parent/child dataset lineage — the documented way to find the child produced by a publish/enrich/match/onboard/sketch run.}
+    - {name: datasets download, description: Download the native dataset bytes to a local file.}
+    - {name: datasets delete, description: "Delete a dataset. Destructive and, per the published reference, irreversible; --yes skips the confirmation."}
+  workflows:
+    - {name: workflow onboard, description: Run the onboard workflow over an existing dataset.}
+    - {name: workflow match, description: Match a dataset against the Landbase graph.}
+    - {name: workflow enrich, description: Enrich a dataset's records with company/person fields.}
+    - {name: workflow publish, description: "Publish a dataset to a downloadable format (--format=csv|jsonl|jsonl.gz)."}
+    - {name: workflow sketch, description: Classify/taxonomize a dataset (--taxonomy-hints).}
+    - {name: workflow status, description: Poll a workflow run.}
+    - {name: workflow qualify, description: "AI-qualify a dataset against criteria; --row-slice added in v0.38.0."}
+    - {name: workflow dedupe, description: Deduplicate a dataset (v0.38.0).}
+    - {name: workflow cancel, description: "Cancel a running workflow run. Shipped in v0.38.0 per the release notice; not yet covered by the workflow reference page."}
+  accounts:
+    - {name: account list, description: List the Landbase accounts this identity can act on.}
+    - {name: account set, description: Choose and persist the active account (per machine); --account=<id> overrides for one command.}
+    - {name: onboarding get, description: Show which onboarding-profile fields the active account still needs.}
+    - {name: onboarding update, description: Submit a partial onboarding profile as JSON.}
+    - {name: credits, description: "Credit balance for the account; echoes account_id since v0.39.0."}
+    - {name: referral, description: "Account referral link and reward stats (v0.37.0)."}
+  contacts_and_campaigns:
+    - {name: contacts-import start, description: "Import a dataset's contacts into the active account under a tag; body is { datasetId, tagName, importId? }. --watch blocks to a terminal phase."}
+    - {name: contacts-import status, description: "Poll an import — { importId, phase, percent, counts, error }."}
+    - {name: contacts-import wait, description: "Block until terminal; backoff 5s, 10s, then 20s cap, 30-minute overall timeout."}
+    - {name: contacts-import schema, description: Inspect the expected import schema (v0.33.0).}
+    - {name: contacts-import resolve, description: Agent header mapping for an import (v0.33.0).}
+    - {name: email-campaigns create, description: Create an email campaign from a JSON definition (template or personalized messaging mode).}
+    - {name: email-campaigns audience, description: Export the matched audience CSV for per-contact copy.}
+    - {name: email-campaigns messages, description: "Upload per-contact subject/body; re-uploading a fixed file is a full replace."}
+    - {name: email-campaigns coverage, description: Show which contacts still lack a complete message set.}
+    - {name: email-campaigns launch, description: "Enroll the audience and hand off to the scheduler. Blocked until every matched contact has a complete message set."}
+    - {name: email-campaigns status, description: Campaign status.}
+    - {name: email-campaigns list, description: List campaigns.}
+    - {name: email-campaigns assign, description: "Assign campaigns to account users (v0.40.0)."}
+    - {name: linkedin-campaigns create/audience/messages/coverage/launch/status/list/sendability, description: "The LinkedIn channel mirrors the email campaign flow; steps start at order 0 (the connection request) and sendability reports per-account send capacity."}
+  segments_and_misc:
+    - {name: segments list, description: List segments (v0.38.0).}
+    - {name: feedback, description: "Send feedback to Landbase; --transcript attaches the agent transcript (v0.32.0/v0.36.0)."}
+    - {name: log, description: Debug/trace logging trigger (v0.36.0).}
+    - {name: config permissions, description: "Install the Landbase Claude Code plugin, exposing /landbase-cli:search, /landbase-cli:auth and /landbase-cli:setup slash commands."}
+    - {name: update, description: Self-update to the newest release.}
+    - {name: version, description: "Print the version; --check queries for an available update."}
+global_flags:
+  - {flag: "--download[=<path>]", description: "Save search results locally; extension picks the format."}
+  - {flag: "--session=<label>", description: Continue the same agent conversation.}
+  - {flag: "--agent=advanced_dataset_creator", description: SQL-backed audience builder with custom output columns.}
+  - {flag: "--format=json|table", description: Output shape for search.}
+  - {flag: "--timeout=<seconds>", description: Request timeout.}
+  - {flag: "--wait", description: Block workflow / contact-enrich submit until terminal.}
+  - {flag: "--yes", description: Confirm a destructive dataset delete.}
+  - {flag: "--verbose", description: Print request/response detail to stderr.}
+  - {flag: "--no-update-check", description: Skip the daily update check.}
+environment:
+  - {name: LANDBASE_API_KEY, description: "Legacy lbk_ API key for non-interactive auth; wins over ~/.landbase/config.json."}
+  - {name: LANDBASE_PLATFORM_API_URL, description: "Platform gateway URL, default https://api.landbase.com."}
+  - {name: LANDBASE_PLATFORM_WEB_URL, description: "Platform web URL, default https://platform.landbase.com."}
+  - {name: LANDBASE_API_BASE_URL, description: "Search API base override; allowlisted to *.landbase.com, localhost, 127.0.0.1 unless LANDBASE_ALLOW_CUSTOM_API_URL=1."}
+  - {name: LANDBASE_API_OAUTH_URL, description: OAuth base URL override.}
+  - {name: LANDBASE_LEGACY_MODE, description: "1 forces legacy (direct AgentOS, API-key) mode."}
+  - {name: LANDBASE_CONFIG_DIR, description: "Config directory, default ~/.landbase."}
+  - {name: LANDBASE_NO_UPDATE_CHECK, description: Disable the daily update check (also off when CI=1).}
+  - {name: LANDBASE_NO_TELEMETRY, description: Disable anonymous usage telemetry.}
+exit_codes:
+  detail: errors/landbase-error-codes.yml
+agent_integration:
+  claude_code: Detected via CLAUDE_CODE_SESSION_ID; runs are associated with the Claude Code session.
+  codex: Detected via CODEX_THREAD_ID.
+  skills: skills/_index.yml — 22 Agent Skills that Landbase publishes alongside the binary.

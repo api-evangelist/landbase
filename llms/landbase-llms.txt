@@ -1,0 +1,19 @@
+# Landbase Docs
+
+> `landbase-cli` is a command-line tool for searching, enriching, and managing B2B audience data from your terminal, Claude Code, Codex, or scripts. Natural-language search returns structured JSON; most commands pipe cleanly into `jq` and other tools.
+> For full documentation in a single file, see https://docs.landbase.com/llms-full.txt
+
+## Get Started
+
+- [Install Landbase CLI](https://docs.landbase.com/install.md): Install on macOS, Linux, or Windows — manually via curl/PowerShell or by asking Claude Code or Codex to install it for you. Includes authentication and a read-only smoke test.
+- [Quick Start](https://docs.landbase.com/quickstart.md): Run your first natural-language search and download results to a file. Start here after installing.
+
+## CLI Usage
+
+- [What can you do with the CLI?](https://docs.landbase.com/what-can-you-do-with-the-cli.md): Command examples for natural-language search, Advanced Dataset Creator (`--agent=advanced_dataset_creator`), record matching, enrichment, contact enrichment (email/phone), dataset uploads, batch workflows, downloads, output handling, and exit codes.
+- [Use in Claude Code and Codex](https://docs.landbase.com/landbase-cli.md): How to use landbase-cli from within Claude Code or Codex — example prompts, agent workflows, session management, and permission tips.
+
+## Capabilities
+
+- [Advanced Audience Search](https://docs.landbase.com/capabilities/advanced-audience-search.md): Guide to Landbase's natural-language approach to custom GTM signals, including Advanced Dataset Creator (`--agent=advanced_dataset_creator`), seven advanced audience-search families, example prompts, architecture notes, and CLI usage.
+- [Premium Datasets](https://docs.landbase.com/capabilities/premium-datasets.md): Guide to enterprise-only premium datasets, including Signals and People Signals, that can be enabled for a workspace and used through Advanced Dataset Creator.

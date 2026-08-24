@@ -1,23 +1,135 @@
 aid: landbase
 name: Landbase
-description: 'Landbase is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Landbase is a Palo Alto, California go-to-market (GTM) data and agentic-AI company whose platform
+  builds, qualifies, enriches and activates B2B audiences from natural-language requests. Its
+  GTM-1/GTM-2 Omni models sit behind a B2B database of 300M+ contacts with 1,500+ enrichment fields,
+  an agentic search surface, lookalike expansion, AI lead qualification, and email/LinkedIn outbound
+  campaign execution. Landbase's programmable surface is deliberately agent-first rather than
+  REST-first: the documented client is `landbase-cli`, a self-updating binary distributed from
+  cli.landbase.com that talks to the cloud gateway at api.landbase.com, returns JSON on stdout and
+  stable error codes on stderr, and ships a library of provider-authored Agent Skills for Claude Code
+  and Codex. No OpenAPI description of the gateway is published; the gateway itself sits behind a
+  Cloudflare bot challenge on every path except /.well-known/.
+image: https://cdn.prod.website-files.com/663db35157fcd223250841ff/665df6511f919f2ee06412ee_webclip-landbase.png
 url: https://raw.githubusercontent.com/api-evangelist/landbase/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-23'
 modified: '2026-08-23'
 tags:
 - Company
-apis: []
+- Go To Market
+- Sales
+- Marketing
+- B2B Data
+- Data Enrichment
+- Artificial Intelligence
+- Agents
+- Command Line Interface
+- Lead Generation
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: landbase:landbase-platform-api
+  name: Landbase Platform API
+  description: >-
+    The Landbase cloud gateway that landbase-cli calls in platform mode. It backs natural-language
+    audience search and agent runs, dataset upload/lineage/download, record match, synchronous
+    person/company enrichment, asynchronous contact (email/phone) enrichment, dataset workflows
+    (onboard, match, enrich, publish, sketch, transform, dedupe, qualify), account onboarding,
+    contact import by tag, and email/LinkedIn campaign creation and launch. Landbase publishes no
+    OpenAPI or other machine-readable description of this gateway; the command surface, error-code
+    registry, output schemas and field reference are documented in prose for the CLI instead.
+  humanURL: https://www.landbase.com/docs
+  baseURL: https://api.landbase.com
+  tags:
+  - Go To Market
+  - B2B Data
+  - Data Enrichment
+  - Agents
+  properties:
+  - type: Documentation
+    url: https://www.landbase.com/docs
+  - type: APIReference
+    url: https://www.landbase.com/docs/reference/search
+  - type: GettingStarted
+    url: https://www.landbase.com/docs/quickstart
+  - type: Authentication
+    url: authentication/landbase-authentication.yml
+  - type: ErrorCatalog
+    url: errors/landbase-error-codes.yml
+  - type: Conventions
+    url: conventions/landbase-conventions.yml
+  - type: Idempotency
+    url: conventions/landbase-conventions.yml
+  - type: RateLimits
+    url: rate-limits/landbase-rate-limits.yml
 common:
 - type: Website
-  url: https://forgeglobal.com/landbase_stock/
+  url: https://www.landbase.com/
+- type: DeveloperPortal
+  url: https://docs.landbase.com/
+- type: Documentation
+  url: https://www.landbase.com/docs
+- type: APIReference
+  url: https://www.landbase.com/docs/reference/search
+- type: GettingStarted
+  url: https://www.landbase.com/docs/quickstart
+- type: Blog
+  url: https://www.landbase.com/blog
+- type: Support
+  url: https://support.landbase.com/landbase/directories
+- type: GitHubOrganization
+  url: https://github.com/landbaseapp
+- type: Pricing
+  url: https://www.landbase.com/pricing
+- type: SignUp
+  url: https://accounts.landbase.com/sign-up
+- type: Login
+  url: https://accounts.landbase.com/sign-in
+- type: TermsOfService
+  url: https://www.landbase.com/legal/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.landbase.com/legal/privacy-policy
+- type: TrustCenter
+  url: security/landbase-trust-center.yml
+- type: LLMsTxt
+  url: llms/landbase-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: CLI
+  url: cli/landbase-cli.yml
+- type: Packages
+  url: packages/landbase-packages.yml
+- type: ChangeLog
+  url: changelog/landbase-changelog.yml
+- type: Lifecycle
+  url: lifecycle/landbase-lifecycle.yml
+- type: Authentication
+  url: authentication/landbase-authentication.yml
+- type: Conventions
+  url: conventions/landbase-conventions.yml
+- type: Idempotency
+  url: conventions/landbase-conventions.yml
+- type: ErrorCatalog
+  url: errors/landbase-error-codes.yml
+- type: Conformance
+  url: conformance/landbase-conformance.yml
+- type: WellKnown
+  url: well-known/landbase-well-known.yml
+- type: DomainSecurity
+  url: security/landbase-domain-security.yml
+- type: Plans
+  url: plans/landbase-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/landbase-rate-limits.yml
+x-enrichment:
+  date: '2026-08-23'
+  status: enriched
+  artifacts_added: 44
+  pass: local-v1

@@ -64,5 +64,20 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Landbase is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/landbase_stock/
+Landbase is a Palo Alto, California go-to-market (GTM) data and agentic-AI company. Its platform
+builds, qualifies, enriches and activates B2B audiences from natural-language requests, backed by a
+database of 300M+ contacts with 1,500+ enrichment fields, lookalike expansion, AI lead
+qualification, and email/LinkedIn outbound campaign execution.
+
+Landbase's programmable surface is deliberately agent-first rather than REST-first. The documented
+client is `landbase-cli`, a self-updating binary distributed from `cli.landbase.com` that calls the
+cloud gateway at `api.landbase.com`, writes JSON to stdout and a stable error envelope to stderr,
+and ships 23 provider-authored Agent Skills for Claude Code and Codex. Landbase publishes **no
+OpenAPI** for the gateway, and the gateway answers a Cloudflare bot challenge on every path except
+`/.well-known/`.
+
+- Website — https://www.landbase.com/
+- Documentation — https://www.landbase.com/docs
+- Pricing — https://www.landbase.com/pricing
+- Trust center — https://trust.landbase.com/
+- Secondary-market listing this profile was seeded from — https://forgeglobal.com/landbase_stock/

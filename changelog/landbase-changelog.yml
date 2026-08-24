@@ -1,0 +1,118 @@
+generated: '2026-08-23'
+method: probed
+source: >-
+  https://cli.landbase.com/latest/version.txt and the per-release
+  https://cli.landbase.com/v<version>/notice.json documents, cross-referenced against the object
+  LastModified timestamps in the public release-bucket listing at https://cli.landbase.com/.
+description: >-
+  Landbase publishes no changelog page on its website or in its documentation. What it does publish
+  is a dated, machine-readable release notice per CLI version — a JSON document carrying `version`,
+  a `highlights` array and a `notes_url` — served alongside every binary in the release bucket. The
+  CLI reads latest/notice.json itself to surface an update prompt. That makes this the provider's
+  real, current, machine-readable change record even though it is not presented as a changelog, and
+  it covers only the client; there is no change record for the api.landbase.com gateway. Dates come
+  from the release bucket's own object listing, not from the notices, which carry no date field.
+docs: https://cli.landbase.com/latest/notice.json
+versioning:
+  scheme: semver (pre-1.0)
+  artifact: landbase-cli
+  current: 0.40.0
+  current_released: '2026-08-14'
+  first_recorded: '2026-04-20'
+  first_recorded_version: 0.2.0
+  release_count: 53
+  cadence: >-
+    53 releases in roughly four months, several on the same day — an actively developed client with
+    no stated release cadence or support window.
+  detail: lifecycle/landbase-lifecycle.yml
+gaps:
+  - >-
+    No breaking-change flag. The notice format has `version` and `highlights` only; nothing marks a
+    change as breaking, additive or a fix, so a consumer cannot filter for the ones that will break
+    them. Breaking changes do happen — v0.31.0 retired the experimental tam_mapping_v1 agent and
+    renamed tam_mapping_v2 to tam_map_creator in the same release.
+  - >-
+    Releases before v0.6.1 (2026-05-26) ship no notice.json at all, so the earliest 15 versions have
+    binaries and checksums but no published description of what changed.
+  - >-
+    Highlights are raw commit subjects, including internal issue keys (VIBE-1972, VIBE-2164) and
+    pull-request numbers pointing at a repository the public cannot read.
+entries:
+  - version: 0.40.0
+    date: '2026-08-14'
+    highlights:
+    - campaign assignment — account users, assign command, launch confirmation (#242)
+    - 'cli: correct download error mapping, stop advertising internal surfaces (#247)'
+    - 'workflow: chain steps on output_dataset_id instead of lineage (#243)'
+  - version: 0.39.0
+    date: '2026-08-13'
+    highlights:
+    - 'account: echo account_id in credits balance and confirm unstamped account ids (#244)'
+  - version: 0.38.0
+    date: '2026-08-05'
+    highlights:
+    - 'cli: segments list + workflow dedupe (VIBE-1972) (#230)'
+    - 'workflow: cancel a running workflow run (#232)'
+    - 'workflow: expose --row-slice on workflow qualify (#235)'
+  - version: 0.37.0
+    date: '2026-07-28'
+    highlights:
+    - 'cli: referral command — account referral link + reward stats (#216)'
+    - 'cli: consolidate duplicated command helpers into src/utils/ (#222)'
+    - 'help: list credits in top-level --help (#225)'
+  - version: 0.36.0
+    date: '2026-07-14'
+    highlights:
+    - add feedback command file (#209)
+    - add log command file (#211)
+  - version: 0.35.0
+    date: '2026-07-14'
+    highlights:
+    - add contact-enrich/workflow command files (#210)
+  - version: 0.34.3
+    date: '2026-07-13'
+    highlights:
+    - add datasets/runs command files (#208)
+  - version: 0.34.2
+    date: '2026-07-13'
+    highlights:
+    - add search/quickstart command files (#207)
+  - version: 0.34.1
+    date: '2026-07-13'
+    highlights:
+    - add version/upload/match/enrich/auth command files (#206)
+    - 'skills: scope-based search routing — fast+enrich/transform vs advanced (#205)'
+  - version: 0.34.0
+    date: '2026-07-09'
+    highlights:
+    - 'cli: resolve and send CC/Codex session titles on agent runs (VIBE-2164) (#198)'
+  - version: 0.33.0
+    date: '2026-07-09'
+    highlights:
+    - 'cli: contacts-import schema and resolve subcommands with agent header mapping (#196)'
+  - version: 0.32.0
+    date: '2026-07-09'
+    highlights:
+    - 'Context telemetry — CLI: config telemetry, log trigger, feedback --transcript (#145)'
+  - version: 0.31.0
+    date: '2026-07-06'
+    highlights:
+    - 'cli: graduate tam_mapping_v2 to GA (on by default) (#193)'
+    - 'cli: rename GA TAM agent tam_mapping_v2 -&gt; tam_map_creator (#200)'
+    - 'cli: retire experimental tam_mapping_v1 agent (#201)'
+  - version: 0.30.0
+    date: '2026-07-06'
+    highlights:
+    - add debug/verbose tooling and dispatch-failure exit-code taxonomy (#194)
+    - 'cli: error on verbless queries instead of silently running search (#160)'
+    - 'e2e: accept qual_criterion columns in workflow chain (#197)'
+  - version: 0.29.0
+    date: '2026-07-01'
+    highlights:
+    - 'skills: reliable skill sync — update skills, config skills, doctor check (#189)'
+    - 'update: add auto-update with 48h grace period, audit log, and opt-out (#181)'
+    - 'workflow: add contact-enrich command (#186)'
+  - version: 0.28.0
+    date: '2026-06-26'
+    highlights:
+    - 'linkedin-campaigns: add the linkedin-campaigns CLI command (#176)'

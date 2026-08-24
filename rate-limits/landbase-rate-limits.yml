@@ -1,0 +1,92 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+provider: Landbase
+providerId: landbase
+generated: '2026-08-23'
+method: searched
+created: '2026-08-23'
+modified: '2026-08-23'
+source: >-
+  https://cli.landbase.com/latest/skills/tools/landbase-search/SKILL.md (the provider's own published
+  Agent Skill, section "Concurrency Limits"),
+  https://www.landbase.com/docs/reference/error-codes,
+  https://www.landbase.com/docs/what-can-you-do-with-the-cli (contact-enrich batching guidance),
+  https://www.landbase.com/docs/reference/contacts-import (polling guidance).
+description: >-
+  Landbase has no rate-limit page in its documentation, but it does publish real numbers — they are
+  scattered across the CLI guide, the contacts-import reference and, most usefully, the Agent Skill
+  Landbase ships to Claude Code and Codex, which states the concurrency ceiling and the client's
+  retry behaviour outright. The runtime signal is a 429 with Retry-After, surfaced to the caller as
+  a RATE_LIMITED error carrying meta.retry_after_seconds. Quota, as opposed to rate, is enforced
+  commercially in credits rather than in requests — see plans/landbase-plans-pricing.yml.
+docs: https://www.landbase.com/docs/reference/error-codes
+headers:
+  retry_after: Retry-After
+  ratelimit_limit: null
+  ratelimit_remaining: null
+  ratelimit_reset: null
+  request_id: null
+  note: >-
+    No X-RateLimit-* or RFC 9239-style RateLimit-* headers are documented, so a caller cannot see
+    how much budget is left before it runs out — only that it has run out. Retry-After on the 429 is
+    the entire signal.
+responseCodes:
+  throttled: 429
+  edge_timeout: 524
+error_envelope:
+  code: RATE_LIMITED
+  exit_code: 2
+  meta_field: retry_after_seconds
+  example: '{"error":{"code":"RATE_LIMITED","message":"Too many requests. Please wait before retrying.","meta":{"retry_after_seconds":30}}}'
+client_retry:
+  attempts: 3
+  backoff: [5s, 10s, 20s]
+  honours_retry_after: true
+  source: https://cli.landbase.com/latest/skills/tools/landbase-search/SKILL.md
+limits:
+  - name: Concurrent agent runs
+    scope: account
+    metric: concurrent_runs
+    limit: 10
+    timeFrame: concurrent
+    exhaustion: HTTP 429 / RATE_LIMITED
+    note: >-
+      "Max 10 concurrent runs per account. HTTP 429 = rate limited. Fan-out beyond 10 workers
+      produces no speedup and burns retries." Published by Landbase in its landbase-search Agent
+      Skill, not in the documentation.
+  - name: Contact-enrichment batch size
+    scope: request
+    metric: leads_per_batch
+    limit: 100
+    timeFrame: request
+    note: Published guidance — "keep each batch at or below 100 leads".
+  - name: Contact-enrichment batch submission rate
+    scope: account
+    metric: batches_per_minute
+    limit: 10
+    timeFrame: minute
+    note: Published guidance — "avoid submitting more than about 10 batches per minute per account". Stated as approximate.
+  - name: Polling cadence
+    scope: account
+    metric: guidance
+    limit: null
+    timeFrame: null
+    note: >-
+      "Avoid sub-second polling — it won't return results faster and may trip rate limits." Landbase
+      publishes a backoff schedule (5s, 10s, 20s cap) rather than a numeric poll ceiling.
+result_ceilings:
+  - {tool: Search Companies, limit: 10000, unit: companies per query}
+  - {tool: Expand Lookalikes, limit: 20000, unit: scored companies}
+  - {tool: Scout Lookalikes, limit: 25, unit: companies (default)}
+timeouts:
+  search_autopoll_default: 300s (overridable with --timeout)
+  contact_enrich_wait_default: ~600s
+  contacts_import_wait: 30 minutes overall, 5s/10s/20s backoff
+limit_count: 3
+gaps:
+  - No published rate-limit reference page; the numbers must be assembled from four different documents.
+  - No per-plan or per-tier limits are published, and no way to see remaining budget before exhaustion.
+  - >-
+    The most precise numbers Landbase publishes live in an Agent Skill rather than in its
+    documentation — machine-readable to an agent that installs the CLI, invisible to a human reading
+    the docs site.
