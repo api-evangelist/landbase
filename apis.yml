@@ -11,6 +11,17 @@ description: >-
   stable error codes on stderr, and ships a library of provider-authored Agent Skills for Claude Code
   and Codex. No OpenAPI description of the gateway is published; the gateway itself sits behind a
   Cloudflare bot challenge on every path except /.well-known/.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/663db35157fcd223250841ff/665df6511f919f2ee06412ee_webclip-landbase.png
 url: https://raw.githubusercontent.com/api-evangelist/landbase/refs/heads/main/apis.yml
 x-type: company
