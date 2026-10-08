@@ -89,3 +89,39 @@ coverage_note: >-
 api_access_gating: >-
   None. Programmatic access via landbase-cli is available on the free tier — the pricing page's own
   comparison makes ungated programmatic access the headline differentiator.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - negotiated
+  - subscription
+  units:
+  - credit
+  plans:
+  - name: 15,000 Credits
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods: []
+  - name: 75,000 Credits
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods: []
+  - name: 200,000 Credits
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods: []
+  - name: Enterprise
+    access: negotiated
+    model: negotiated
+    model_how: stated
+    units: []
+    periods: []
