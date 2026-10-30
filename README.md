@@ -64,20 +64,137 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Landbase is a Palo Alto, California go-to-market (GTM) data and agentic-AI company. Its platform
-builds, qualifies, enriches and activates B2B audiences from natural-language requests, backed by a
-database of 300M+ contacts with 1,500+ enrichment fields, lookalike expansion, AI lead
-qualification, and email/LinkedIn outbound campaign execution.
+Landbase is a Palo Alto, California go-to-market (GTM) data and agentic-AI company whose platform builds, qualifies, enriches and activates B2B audiences from natural-language requests. Its GTM-1/GTM-2 Omni models sit behind a B2B database of 300M+ contacts with 1,500+ enrichment fields, an agentic search surface, lookalike expansion, AI lead qualification, and email/LinkedIn outbound campaign execution. Landbase's programmable surface is deliberately agent-first rather than REST-first: the documented client is `landbase-cli`, a self-updating binary distributed from cli.landbase.com that talks to the cloud gateway at api.landbase.com, returns JSON on stdout and stable error codes on stderr, and ships a library of provider-authored Agent Skills for Claude Code and Codex. No OpenAPI description of the gateway is published; the gateway itself sits behind a Cloudflare bot challenge on every path except /.well-known/.
 
-Landbase's programmable surface is deliberately agent-first rather than REST-first. The documented
-client is `landbase-cli`, a self-updating binary distributed from `cli.landbase.com` that calls the
-cloud gateway at `api.landbase.com`, writes JSON to stdout and a stable error envelope to stderr,
-and ships 23 provider-authored Agent Skills for Claude Code and Codex. Landbase publishes **no
-OpenAPI** for the gateway, and the gateway answers a Cloudflare bot challenge on every path except
-`/.well-known/`.
+**Areas:** Company · Go-To-Market · Sales · Marketing · B2B Data · Data Enrichment · Artificial Intelligence · Agents · Command Line Interface · Lead Generation
 
-- Website — https://www.landbase.com/
-- Documentation — https://www.landbase.com/docs
-- Pricing — https://www.landbase.com/pricing
-- Trust center — https://trust.landbase.com/
-- Secondary-market listing this profile was seeded from — https://forgeglobal.com/landbase_stock/
+## Landbase on APIs.io
+
+Everything profiled for Landbase is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/landbase/](https://apis.io/providers/landbase/)** — or go straight to one of the APIs or properties below.
+
+### APIs (1)
+
+- [Landbase Platform API](https://apis.io/apis/landbase/landbase-platform-api/) — The Landbase cloud gateway that landbase-cli calls in platform mode. It backs natural-language audience search and agent runs, dataset…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Agent skills (23)
+
+Agent skills built on the API.
+
+- [contact-enrich](https://apis.io/agent-skills/landbase/contact-enrich/)
+- [contacts-import](https://apis.io/agent-skills/landbase/contacts-import/)
+- [dataset-management](https://apis.io/agent-skills/landbase/dataset-management/)
+- [dataset-pipeline](https://apis.io/agent-skills/landbase/dataset-pipeline/)
+- [dedupe-leads](https://apis.io/agent-skills/landbase/dedupe-leads/)
+- [icp-capture](https://apis.io/agent-skills/landbase/icp-capture/)
+- [landbase-email-campaigns](https://apis.io/agent-skills/landbase/landbase-email-campaigns/)
+- [landbase-feedback](https://apis.io/agent-skills/landbase/landbase-feedback/)
+- [landbase-linkedin-campaigns](https://apis.io/agent-skills/landbase/landbase-linkedin-campaigns/)
+- [landbase-quickstart](https://apis.io/agent-skills/landbase/landbase-quickstart/)
+- [landbase-search](https://apis.io/agent-skills/landbase/landbase-search/)
+- [list-similarity-check](https://apis.io/agent-skills/landbase/list-similarity-check/)
+- [lookalike-expansion](https://apis.io/agent-skills/landbase/lookalike-expansion/)
+- [match-lookup](https://apis.io/agent-skills/landbase/match-lookup/)
+- [presentation](https://apis.io/agent-skills/landbase/presentation/)
+- [prospect-builder](https://apis.io/agent-skills/landbase/prospect-builder/)
+- [qualify-leads](https://apis.io/agent-skills/landbase/qualify-leads/)
+- [query-assist](https://apis.io/agent-skills/landbase/query-assist/)
+- [tam-mapping](https://apis.io/agent-skills/landbase/tam-mapping/)
+- [transcript-synthesis](https://apis.io/agent-skills/landbase/transcript-synthesis/)
+- [workflow-enrich](https://apis.io/agent-skills/landbase/workflow-enrich/)
+- [workflow-monitor](https://apis.io/agent-skills/landbase/workflow-monitor/)
+- [workflow-transform](https://apis.io/agent-skills/landbase/workflow-transform/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Landbase Authentication](https://apis.io/security/landbase/landbase-authentication/)
+- [Landbase Domain Security](https://apis.io/security/landbase/landbase-domain-security/)
+- [Landbase Trust Center](https://apis.io/security/landbase/landbase-trust-center/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Landbase Plans Pricing](https://apis.io/plans/landbase/landbase-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Landbase Rate Limits](https://apis.io/rate-limits/landbase/landbase-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.landbase.com/)
+- [Documentation](https://www.landbase.com/docs)
+- [Getting started](https://www.landbase.com/docs/quickstart)
+- [API reference](https://www.landbase.com/docs/reference/search)
+- [Pricing](https://www.landbase.com/pricing)
+- [Sign up](https://accounts.landbase.com/sign-up)
+- [Support](https://support.landbase.com/landbase/directories)
+- [Blog](https://www.landbase.com/blog)
+- [Terms of service](https://www.landbase.com/legal/terms-of-service)
+- [Privacy policy](https://www.landbase.com/legal/privacy-policy)
+- [GitHub](https://github.com/landbaseapp)
+
+## API Evangelist rating
+
+**Kin Score 45.8** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 0.0 |
+| Contract governance | 0.0 |
+| Operational transparency | 50.0 |
+| Developer ergonomics | 66.7 |
+| Access clarity | 84.2 |
+
+**Agent readiness 18.7** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 27.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/landbase/](https://apis.io/providers/landbase/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Landbase: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/landbase/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
